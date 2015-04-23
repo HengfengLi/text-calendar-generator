@@ -1,6 +1,8 @@
 # text-calendar-generator
 
+<!--
 [![Build Status](https://travis-ci.org/HengfengLi/text-calendar-generator.svg?branch=master)](https://travis-ci.org/HengfengLi/text-calendar-generator)
+-->
 
 
 I learnt this text calendar from Brian Kernighan's course website  
