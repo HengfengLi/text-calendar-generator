@@ -1,0 +1,5 @@
+color,start_day,end_day,note
+red,23-06-2015,23-06-2015,acm sigspatial’15
+red,08-05-2015,08-05-2015,cikm15
+red,03-06-2015,03-06-2015,icdm15
+red,29-07-2015,29-07-2015,icde16
