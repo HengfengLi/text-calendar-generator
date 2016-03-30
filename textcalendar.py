@@ -33,6 +33,7 @@ import datetime
 from calendar import monthrange
 from collections import defaultdict
 import codecs, os
+import pprint
 # try:
 #     from html import escape  # py3
 # except ImportError:
@@ -161,9 +162,13 @@ def generate(year, mth):
     
     return month_calendar
 
-def attach(month_calendars, events):
+def attach(month_calendars, events, year):
     """
     Link the events to days and weeks
+    
+    Mo  Tu  We  Th  Fr  Sa  Su
+    0   1   2   3   4   5   6 
+    
     """
     for i in range(len(events)):
         event = events[i]
@@ -172,13 +177,44 @@ def attach(month_calendars, events):
         
         d_num, m_num, y_num = map(int, items)
         
+        if y_num != year:
+            continue
+        
+        # first day of the month is which day in the week, 0 is Monday 
+        # and 6 is Sunday. 
         first_day_in_week, num_of_days = monthrange(y_num, m_num)
         
         month_cal = month_calendars[m_num-1]
         
+        pprint.pprint(month_cal)
+        
         # find out the week
         
-        week_ind = (d_num + first_day_in_week) / len(DAY_HEADERS)
+        """
+        [[0, 0, 0, 1, 2, 3, 4],
+         [5, 6, 7, 8, 9, 10, 11],
+         [12, 13, 14, 15, 16, 17, 18],
+         [19, 20, 21, 22, 23, 24, 25],
+         [26, 27, 28, 29, 30, 0, 0]]
+        
+        first_day_in_week = 2
+        prefix_days = (2+1)%7 = 3
+        
+        [[1, 2, 3, 4, 5, 6, 7],
+         [8, 9, 10, 11, 12, 13, 14],
+         [15, 16, 17, 18, 19, 20, 21],
+         [22, 23, 24, 25, 26, 27, 28],
+         [29, 30, 31, 0, 0, 0, 0]]
+        
+        first_day_in_week = 6
+        prefix_days = (6+1)%7 = 0
+        
+        """
+        prefix_days = (first_day_in_week + 1) % len(DAY_HEADERS)
+        week_ind = (prefix_days + d_num) / len(DAY_HEADERS)
+        
+        print d_num, m_num, y_num
+        print first_day_in_week, "week_ind:", week_ind
         
         event_week = month_cal[week_ind]
         # 0 means Sunday
@@ -230,21 +266,24 @@ def display_month(mth, mth_calendar, events):
 def main():
     import sys, getopt
     
-    (opts, args) = getopt.getopt(sys.argv[1:],"m:y:f:h")
+    (opts, args) = getopt.getopt(sys.argv[1:],"s:e:y:f:h")
     
     filename = "calendar.html"
     start_month = 1
-    y = 2015
+    end_month = 12
+    y = 2016
     
     for o,a in opts:
-        if o == "-m":
+        if o == "-s":
             start_month = int(a)
+        if o == "-e":
+            end_month = int(a)
         if o == "-y":
             y = int(a)
         if o == "-f":
             filename = a
         if o == "-h":
-            print "Usage: python cao2009_generate_graph.py [-m <start_month>] [-y <year>] [-f <filename>] [-h]\n"
+            print "Usage: python textcalendar.py [-s <start_month>] [-e <end_month>] [-y <year>] [-f <filename>] [-h]\n"
             exit()
     
     calendar_str = u""
@@ -265,13 +304,14 @@ def main():
     # print month_calendars
     
     # step 2: attach
-    attach(month_calendars, events)
+    attach(month_calendars, events, y)
     
     calendar_str += blockquote[START]
     calendar_str += pre[START]
     calendar_str += col_headers
+    
     # step 3: display
-    for m in range(start_month-1, len(MONTH)):
+    for m in range(start_month-1, end_month):
         month_calendar = month_calendars[m]
         calendar_str += display_month(m+1, month_calendar, events)
     calendar_str += pre[END]

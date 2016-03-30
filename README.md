@@ -13,3 +13,8 @@ I really like it so I write this calendar generator.
 Learn to how to use 'nosetests' to write unit tests in Python.
 
 Make it work for multiple dates. 
+
+
+>> Usage: python textcalendar.py [-m <start_month>] [-y <year>] [-f <filename>] [-h]
+
+>> python textcalendar.py -m 9 -y 2015 -f calendar.html
